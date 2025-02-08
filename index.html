@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interesting Talks</title>
+    <title>Books & Talks</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,11 +39,17 @@
 </head>
 <body>
     <div class="container">
-        <h1>Interesting Talks</h1>
+        <h1>Books & Talks</h1>
         <div id="pages"></div>
     </div>
 
     <script>
+        // Add a mapping object for book IDs to titles
+        const bookTitles = {
+            "305.OY.25.001": "女性与社会权力系统"
+            // Add more mappings as needed
+        };
+
         async function loadPages() {
             try {
                 const response = await fetch('data/pages.json');
@@ -57,11 +63,17 @@
                     !page.title.toLowerCase().includes('talk'));
                 
                 const pagesDiv = document.getElementById('pages');
-                pagesDiv.innerHTML = filteredPages.map(page => `
-                    <div class="page">
-                        <h2><a href="${page.url}">${page.title}</a></h2>
-                    </div>
-                `).join('');
+                pagesDiv.innerHTML = filteredPages.map(page => {
+                    // Extract the file ID from the URL (assuming URL ends with something like '305.OY.25.001.html')
+                    const fileId = page.url.split('/').pop().replace('.html', '');
+                    // Use the mapped title if available, otherwise use the original title
+                    const displayTitle = bookTitles[fileId] || page.title;
+                    return `
+                        <div class="page">
+                            <h2><a href="${page.url}">${displayTitle}</a></h2>
+                        </div>
+                    `;
+                }).join('');
             } catch (error) {
                 console.error('Error loading pages:', error);
             }
