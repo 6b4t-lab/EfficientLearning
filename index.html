@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interesting Talks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1em;
+        }
+        .page {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 1em;
+            padding: 1em;
+            transition: box-shadow 0.3s ease;
+        }
+        .page:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .page h2 {
+            margin: 0;
+        }
+        .page a {
+            text-decoration: none;
+            color: #333;
+        }
+        .page a:hover {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interesting Talks</h1>
+        <div id="pages"></div>
+    </div>
+
+    <script>
+        async function loadPages() {
+            try {
+                const response = await fetch('data/pages.json');
+                const data = await response.json();
+                
+                // Sort pages by creation date (newest first)
+                const pages = data.pages.sort((a, b) => b.created - a.created);
+                
+                // Filter out test talks
+                const filteredPages = pages.filter(page => 
+                    !page.title.toLowerCase().includes('talk'));
+                
+                const pagesDiv = document.getElementById('pages');
+                pagesDiv.innerHTML = filteredPages.map(page => `
+                    <div class="page">
+                        <h2><a href="${page.url}">${page.title}</a></h2>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading pages:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPages);
+    </script>
+</body>
+</html>
